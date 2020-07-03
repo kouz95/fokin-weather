@@ -8,5 +8,10 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "strict": true
-  }
+  },
+  "include": [
+    "src/**/*",
+    "./App.tsx"
+  ],
+  "exclude": ["node_modules", "babel.config.js"]
 }
