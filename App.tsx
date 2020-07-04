@@ -20,7 +20,7 @@ export default class extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      isLoading: false,
+      isLoading: true,
       temp: 0,
       condition: 'Clear',
     };
