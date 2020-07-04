@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 
 interface Props {
   temp: number;
+  condition: string;
 }
 
 const styles = StyleSheet.create({
@@ -14,14 +15,27 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function Weather({ temp }: Props) {
+export default function Weather({ temp, condition }: Props) {
   return (
     <View style={styles.container}>
       <Text>{temp}</Text>
+      <Text>{condition}</Text>
     </View>
   );
 }
 
 Weather.propTypes = {
   temp: PropTypes.number.isRequired,
+  condition: PropTypes.oneOf([
+    'ThunderStorm',
+    'Drizzle',
+    'Rain',
+    'Snow',
+    'Atmosphere',
+    'Clear',
+    'Clouds',
+    'Haze',
+    'Mist',
+    'Dust',
+  ]).isRequired,
 };

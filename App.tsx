@@ -5,14 +5,15 @@ import axios from 'axios';
 import Loading from './src/Loading';
 import Weather from './src/Weather';
 
+const API_KEY = '4c4fd33dc52199132ebbcbb788b5711e';
+
 interface Props {}
 
 interface State {
   isLoading: boolean;
   temp: number;
+  condition: string;
 }
-
-const API_KEY = '4c4fd33dc52199132ebbcbb788b5711e';
 
 export default class extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -21,6 +22,7 @@ export default class extends React.Component<Props, State> {
     this.state = {
       isLoading: false,
       temp: 0,
+      condition: 'Clear',
     };
   }
 
@@ -29,10 +31,15 @@ export default class extends React.Component<Props, State> {
   }
 
   getWeather = async (latitude: number, longitude: number) => {
-    const { data } = await axios.get(
+    const {
+      data: {
+        main: { temp },
+        weather
+      }
+    } = await axios.get(
       `http://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&APPID=${API_KEY}&units=metric`
     );
-    this.setState({ isLoading: false, temp: data.main.temp });
+    this.setState({ isLoading: false, temp: temp, condition: weather[0].main });
   };
 
   getLocation = async () => {
@@ -48,8 +55,8 @@ export default class extends React.Component<Props, State> {
   };
 
   render() {
-    const { isLoading, temp } = this.state;
+    const { isLoading, temp, condition } = this.state;
     const roundedTemp = Math.round(temp);
-    return isLoading ? <Loading /> : <Weather temp={roundedTemp} />;
+    return isLoading ? <Loading /> : <Weather temp={roundedTemp} condition={condition} />;
   }
 }
