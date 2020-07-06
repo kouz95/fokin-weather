@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import * as Location from 'expo-location';
 import { Alert } from 'react-native';
 import axios from 'axios';
@@ -7,56 +7,52 @@ import Weather from './src/Weather';
 
 const API_KEY = '4c4fd33dc52199132ebbcbb788b5711e';
 
-interface Props {}
+export type WeatherOption =
+  | 'Thunderstorm'
+  | 'Drizzle'
+  | 'Rain'
+  | 'Snow'
+  | 'Atmosphere'
+  | 'Clear'
+  | 'Haze'
+  | 'Mist'
+  | 'Dust';
 
-interface State {
-  isLoading: boolean;
-  temp: number;
-  condition: string;
-}
+export default function App() {
+  const [isLoading, setIsLoading] = useState(true);
+  const [temp, setTemp] = useState(0);
+  const [condition, setCondition] = useState<WeatherOption>('Clear');
 
-export default class extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-
-    this.state = {
-      isLoading: true,
-      temp: 0,
-      condition: 'Clear',
-    };
-  }
-
-  componentDidMount(): void {
-    this.getLocation();
-  }
-
-  getWeather = async (latitude: number, longitude: number) => {
+  const getWeather = async (latitude: number, longitude: number) => {
     const {
       data: {
         main: { temp },
-        weather
-      }
+        weather,
+      },
     } = await axios.get(
       `http://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&APPID=${API_KEY}&units=metric`
     );
-    this.setState({ isLoading: false, temp: temp, condition: weather[0].main });
+    setIsLoading(false);
+    setTemp(temp);
+    setCondition(weather[0].main);
   };
 
-  getLocation = async () => {
+  const getLocation = async () => {
     try {
       await Location.requestPermissionsAsync();
       const {
         coords: { latitude, longitude },
       } = await Location.getCurrentPositionAsync();
-      this.getWeather(latitude, longitude);
+      getWeather(latitude, longitude);
     } catch (error) {
       Alert.alert("Can't find you.", 'So sad');
     }
   };
 
-  render() {
-    const { isLoading, temp, condition } = this.state;
-    const roundedTemp = Math.round(temp);
-    return isLoading ? <Loading /> : <Weather temp={roundedTemp} condition={condition} />;
-  }
+  useEffect(() => {
+    getLocation();
+  }, []);
+
+  const roundedTemp = Math.round(temp);
+  return isLoading ? <Loading /> : <Weather temp={roundedTemp} condition={condition} />;
 }
