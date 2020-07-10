@@ -5,6 +5,13 @@ import axios from 'axios';
 import Loading from './src/Loading';
 import Weather from './src/Weather';
 
+
+/*
+ *
+ * @author : @kouz95
+ */
+
+
 const API_KEY = '4c4fd33dc52199132ebbcbb788b5711e';
 
 export type WeatherOption =
